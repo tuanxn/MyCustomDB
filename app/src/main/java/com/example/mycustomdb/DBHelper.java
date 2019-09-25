@@ -1,5 +1,6 @@
 package com.example.mycustomdb;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -35,6 +36,30 @@ public class DBHelper extends SQLiteOpenHelper {
                 "name TEXT, " +
                 "salary DOUBLE, " +
                 "hire_date DATE)");
+    }
+
+    // Insert record into table using execSQL method
+    public void insertRecord(String sqlStatement) {
+        this.getWritableDatabase().execSQL(sqlStatement);
+    }
+
+    // Insert record using insert() method
+    public long addRecord(String nameKey, String nameValue, String salaryKey, Double salaryValue, String dateKey, String dateValue) {
+
+        // Create db object reference
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Create ContentValues object
+        ContentValues value = new ContentValues();
+
+        // Insert key-value pairs into the ContentValues dictionary
+        value.put(nameKey, nameValue);
+        value.put(salaryKey, salaryValue);
+        value.put(dateKey, dateValue);
+
+        // Insert into table and return record ID or -1 if unsuccessful
+        // 2nd argument will always be null
+        return db.insert("customer_tbl", null, value);
+
     }
 
 }

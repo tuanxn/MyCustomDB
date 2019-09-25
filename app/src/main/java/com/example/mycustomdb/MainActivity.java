@@ -26,6 +26,25 @@ public class MainActivity extends AppCompatActivity {
         myHelper.createTable("customer_tbl");
     }
 
+    // onResume is called when the application is relaunched
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Insert record using execSQL() method
+//        myHelper.insertRecord("INSERT INTO customer_tbl(name, salary, hire_date) VALUES('Tuan', 7500.00, '2019/12/28')");
+
+        // Insert record using insert() method
+        long result = myHelper.addRecord("name", "Tom", "salary", 9000.00, "hire_date", "2020/12/12");
+
+        if(result == -1) {
+            Toast.makeText(this, "Insertion error!", Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(this, "Record inserted!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
