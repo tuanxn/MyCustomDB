@@ -2,10 +2,13 @@ package com.example.mycustomdb;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -60,6 +63,61 @@ public class DBHelper extends SQLiteOpenHelper {
         // 2nd argument will always be null
         return db.insert("customer_tbl", null, value);
 
+    }
+
+    // Delete method using execSQL() method
+    public void deleteRecord(String sqlStatemnet) {
+        this.getWritableDatabase().execSQL(sqlStatemnet);
+    }
+
+    // Delete() method used
+    public int removeRecord(String tableName, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(tableName, whereClause, whereArgs);
+    }
+
+    // Update using execSQL() method
+    public void updateRecord(String sqlStatement) {
+        this.getWritableDatabase().execSQL(sqlStatement);
+    }
+
+    // Update using update() method
+    public int changeRecord(String tableName, Object[] values, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        // Create ContentValue dictionary with column headers and values from the String array
+        cv.put("name", values[0].toString());
+        cv.put("salary", ((Double) values[1]));
+        cv.put("hire_date", values[2].toString());
+        return db.update(tableName, cv, whereClause, whereArgs);
+    }
+
+    // Create method that creates an array list of customer object records from table
+    public ArrayList<Customer> readRecords(String sqlStatement) {
+        // Create array list to hold all customer records
+        ArrayList<Customer> allCustomers = new ArrayList<Customer>();
+        // Create variables to hold value from each column
+        int id;
+        String name;
+        double salary;
+        String hire_date;
+        // Create database instance
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Create cursor object that is returned when we call rawQuery()
+        // Provide null value for optional WHERE clause
+        Cursor cursor = db.rawQuery(sqlStatement, null);
+        // Loop through the returned cursor object while it has another record to read
+        // Assign the values from each column to its respective variable
+        // Instantiate a Customer object for each record and add it to the Customer array list
+        while(cursor.moveToNext()) {
+            id = cursor.getInt(0);
+            name = cursor.getString(1);
+            salary = cursor.getDouble(2);
+            hire_date = cursor.getString(3);
+            allCustomers.add(new Customer(id, name, salary, hire_date));
+        }
+        // Return the Customer array list
+        return allCustomers;
     }
 
 }
